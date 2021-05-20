@@ -10,10 +10,10 @@ from scipy.ndimage.interpolation import map_coordinates
 
 # Number of blured images you want to keep in your dataset.
 ############## set according to your convenience...##############
-num_test_images = 6000
+num_test_images = 60000
 
 # Read the data from mnist dataset to generate blur images.
-df=pd.read_csv('dataset/full_mnist_test.csv',skiprows=0)
+df=pd.read_csv('dataset/full_mnist_train.csv',skiprows=0)
 
 # Train and reshape the dataset
 x_train=np.array(df)
@@ -84,10 +84,14 @@ def plot_augmented(examples, alpha_range=0, sigma=0,
 			final_op = np.vstack([final_op,flat_img])	# insert next image as 1D array
 
 	# Add respective image label(image-class) as first element before each image
-	final_op_labeled = np.hstack([y_train, final_op])
+	final_op_labeled_array = np.hstack([y_train, final_op])
+
+	#np array to DF
+	final_op_labeled = pd.DataFrame(final_op_labeled_array)
 
 	# save the data as .csv to use as training-data of blured image for any network.
-	np.savetxt('./dataset/mnist_blur_{}shift{}.csv'.format(shift_type, num_test_images), final_op_labeled, delimiter=",")
+	final_op_labeled.to_csv('./dataset/mnist_blur_{}shift{}.csv'.format(shift_type, num_test_images), index=False)
+	# np.savetxt('./dataset/mnist_blur_{}shift{}.csv'.format(shift_type, num_test_images), final_op_labeled, delimiter=",")
 
 
 b_examples = np.expand_dims(x_train[:num_test_images], -1)
